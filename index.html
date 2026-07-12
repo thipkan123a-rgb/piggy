@@ -417,4 +417,990 @@
         <h3>📊 สถิติโดยรวม</h3>
         <div class="stats-grid">
           <div class="stat-box"><div class="stat-label">เฉลี่ยต่อวัน</div><div class="stat-value" id="statDailyAvg">฿0</div></div>
-          <div class="stat-box"><div class="stat-label">รวม
+          <div class="stat-box"><div class="stat-label">รวมสัปดาห์นี้</div><div class="stat-value" id="statWeekTotal">฿0</div></div>
+          <div class="stat-box"><div class="stat-label">รวมเดือนนี้</div><div class="stat-value" id="statMonthTotal">฿0</div></div>
+          <div class="stat-box"><div class="stat-label">วันที่ออมสูงสุด</div><div class="stat-value" id="statHighestDay">-</div></div>
+          <div class="stat-box"><div class="stat-label">เงินฝากรวม</div><div class="stat-value" id="statTotalDeposits">฿0</div></div>
+          <div class="stat-box"><div class="stat-label">เงินถอนรวม</div><div class="stat-value" id="statTotalWithdrawals">฿0</div></div>
+          <div class="stat-box"><div class="stat-label">เงินออมสุทธิ</div><div class="stat-value" id="statNetSavings">฿0</div></div>
+          <div class="stat-box"><div class="stat-label">สถิติต่อเนื่องยาวสุด</div><div class="stat-value" id="statLongestStreak">0 วัน</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🥉 ระดับการออม</h3>
+        <div class="level-row">
+          <div class="level-icon" id="savingLevelIcon">🥉</div>
+          <div>
+            <div class="level-name" id="savingLevelName">Bronze</div>
+            <div class="level-sub">อิงจากยอดเงินคงเหลือปัจจุบัน</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🔮 คาดการณ์ถึงเป้าหมาย</h3>
+        <div class="predicted-value" id="predictedDate">-</div>
+      </div>
+
+      <div class="card">
+        <h3>🗓️ แผนที่การออม</h3>
+        <div class="heatmap-scroll"><div class="heatmap-grid" id="heatmap"></div></div>
+      </div>
+
+      <div class="card">
+        <h3>🏆 ความสำเร็จ</h3>
+        <div class="achievements-grid" id="achievementsGrid"></div>
+      </div>
+    </section>
+
+    <!-- CALENDAR -->
+    <section id="page-calendar" class="page">
+      <div class="card">
+        <div class="calendar-header">
+          <button class="calendar-nav-btn icon-btn" id="calPrevBtn">◀</button>
+          <span class="calendar-title" id="calendarTitle"></span>
+          <button class="calendar-nav-btn icon-btn" id="calNextBtn">▶</button>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="calendar-legend">
+          <span><span class="legend-dot" style="background:var(--card-alt);border:1px solid var(--border);"></span>ไม่มีการออม</span>
+          <span><span class="legend-dot" style="background:rgba(251,107,91,.75);"></span>ออมน้อยกว่า 60</span>
+          <span><span class="legend-dot" style="background:var(--primary);"></span>ออมครบ 60+</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="page-history" class="page">
+      <div class="card">
+        <div class="history-toolbar">
+          <input type="text" id="historySearchInput" placeholder="ค้นหารายการ...">
+          <div class="filter-row">
+            <button class="filter-btn active" data-filter="all">ทั้งหมด</button>
+            <button class="filter-btn" data-filter="deposit">เงินเข้า</button>
+            <button class="filter-btn" data-filter="withdraw">เงินออก</button>
+          </div>
+        </div>
+        <div id="historyList"></div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="page-settings" class="page">
+      <div class="card">
+        <h3>🎨 การแสดงผล</h3>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">โหมดมืด</div>
+            <div class="settings-desc">จำการตั้งค่าไว้ในอุปกรณ์นี้</div>
+          </div>
+          <select id="themeSelect">
+            <option value="dark">มืด</option>
+            <option value="light">สว่าง</option>
+          </select>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">โหมดลืมเงิน</div>
+            <div class="settings-desc">ซ่อนตัวเลขยอดเงินและสถิติ</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="hiddenModeToggle"><span class="slider-toggle"></span></label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>⏰ การแจ้งเตือน</h3>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">เตือนออมเงินประจำวัน</div>
+            <div class="settings-desc">ต้องเปิดแอปไว้ในเบราว์เซอร์เพื่อรับการแจ้งเตือน</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="reminderEnabledToggle"><span class="slider-toggle"></span></label>
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">เวลาแจ้งเตือน</div>
+          <input type="time" id="reminderTimeInput" value="20:00">
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🎯 เป้าหมายทั้งหมด</h3>
+        <div class="goals-reference">
+          <div>รายวัน<b>฿60</b></div>
+          <div>รายสัปดาห์<b>฿420</b></div>
+          <div>รายเดือน<b>฿1,800</b></div>
+          <div>เป้าหมายหลัก<b>฿10,000</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>💾 สำรองข้อมูล</h3>
+        <div class="backup-actions">
+          <button class="btn btn-secondary" id="exportBtn">⬇️ ส่งออกข้อมูล (JSON)</button>
+          <button class="btn btn-secondary" id="importBtn">⬆️ นำเข้าข้อมูล (JSON)</button>
+          <input type="file" id="importInput" accept="application/json">
+          <button class="btn btn-danger" id="resetBtn">🗑️ ล้างข้อมูลทั้งหมด</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="home"><span class="nav-icon">🏠</span><span>หน้าแรก</span></button>
+    <button class="nav-btn" data-page="stats"><span class="nav-icon">📊</span><span>สถิติ</span></button>
+    <button class="nav-btn" data-page="calendar"><span class="nav-icon">📅</span><span>ปฏิทิน</span></button>
+    <button class="nav-btn" data-page="history"><span class="nav-icon">📝</span><span>ประวัติ</span></button>
+    <button class="nav-btn" data-page="settings"><span class="nav-icon">⚙️</span><span>ตั้งค่า</span></button>
+  </nav>
+</div>
+
+<!-- Day detail modal -->
+<div class="modal-overlay" id="modal-day">
+  <div class="modal-box">
+    <button class="modal-close" data-close="modal-day">✕</button>
+    <h3 id="dayModalDate">-</h3>
+    <div class="modal-row"><span>เงินเข้า</span><span id="dayModalDeposit">฿0</span></div>
+    <div class="modal-row"><span>เงินออก</span><span id="dayModalWithdraw">฿0</span></div>
+    <div class="modal-row"><span>รวมสุทธิ</span><span id="dayModalTotal">฿0</span></div>
+  </div>
+</div>
+
+<!-- Edit transaction modal -->
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal-box">
+    <button class="modal-close" data-close="modal-edit">✕</button>
+    <h3>แก้ไขรายการ</h3>
+    <label>ประเภท</label>
+    <select id="editType">
+      <option value="deposit">เงินเข้า</option>
+      <option value="withdraw">เงินออก</option>
+    </select>
+    <label>จำนวนเงิน</label>
+    <input type="number" id="editAmount">
+    <label>วันที่และเวลา</label>
+    <input type="datetime-local" id="editDate">
+    <button class="btn btn-add" id="saveEditBtn" style="margin-top:16px;">💾 บันทึก</button>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<div id="confettiLayer"></div>
+
+<script>
+'use strict';
+
+/* ================= Storage ================= */
+const STORAGE_KEY = 'piggyRecords';
+const SETTINGS_KEY = 'piggySettings';
+const GOALS = { daily: 60, weekly: 420, monthly: 1800, main: 10000 };
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function loadRecords(){
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
+}
+function saveRecords(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(records)); }
+
+function loadSettings(){
+  const defaults = {
+    theme: 'dark',
+    hidden: true,
+    reminderTime: '20:00',
+    reminderEnabled: false,
+    lastReminderDate: null,
+    seenAchievements: [],
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+    return Object.assign({}, defaults, saved);
+  } catch (e) {
+    return defaults;
+  }
+}
+function saveSettings(){ localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
+
+let records = loadRecords();
+let settings = loadSettings();
+
+/* ================= Date helpers ================= */
+function startOfDay(d){ const x = new Date(d); x.setHours(0,0,0,0); return x; }
+function isSameDay(a,b){ return startOfDay(a).getTime() === startOfDay(b).getTime(); }
+function fmtDateThai(d){ return new Date(d).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'}); }
+function fmtMoney(n){ return Math.round(n).toLocaleString('th-TH'); }
+function toDatetimeLocal(d){
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/* ================= Core calculations ================= */
+function getBalance(){ return records.reduce((s,r) => s + r.amount, 0); }
+
+function getRollingTotal(days){
+  const start = startOfDay(new Date()).getTime() - (days - 1) * DAY_MS;
+  return records.filter(r => new Date(r.date).getTime() >= start).reduce((s,r) => s + r.amount, 0);
+}
+function getTodayTotal(){ return getRollingTotal(1); }
+function getWeekTotal(){ return getRollingTotal(7); }
+
+function getMonthTotal(year, month){
+  const y = year !== undefined ? year : new Date().getFullYear();
+  const m = month !== undefined ? month : new Date().getMonth();
+  return records.filter(r => {
+    const d = new Date(r.date);
+    return d.getFullYear() === y && d.getMonth() === m;
+  }).reduce((s,r) => s + r.amount, 0);
+}
+
+function getDayTotals(){
+  const totals = new Map();
+  records.forEach(r => {
+    const key = startOfDay(r.date).getTime();
+    totals.set(key, (totals.get(key) || 0) + r.amount);
+  });
+  return totals;
+}
+
+function getSavingDaySet(){
+  const totals = getDayTotals();
+  const set = new Set();
+  totals.forEach((total, key) => { if (total > 0) set.add(key); });
+  return set;
+}
+
+function getCurrentStreak(){
+  const savingDays = getSavingDaySet();
+  let cursor = startOfDay(new Date()).getTime();
+  if (!savingDays.has(cursor)) cursor -= DAY_MS;
+  let streak = 0;
+  while (savingDays.has(cursor)) { streak++; cursor -= DAY_MS; }
+  return streak;
+}
+
+function getLongestStreak(){
+  const days = Array.from(getSavingDaySet()).sort((a,b) => a - b);
+  if (!days.length) return 0;
+  let longest = 1, current = 1;
+  for (let i = 1; i < days.length; i++){
+    current = (days[i] - days[i-1] === DAY_MS) ? current + 1 : 1;
+    longest = Math.max(longest, current);
+  }
+  return longest;
+}
+
+function getSavingScore(){
+  const now = new Date();
+  const daysElapsed = now.getDate();
+  const savingDays = getSavingDaySet();
+  let count = 0;
+  for (let d = 1; d <= daysElapsed; d++){
+    const key = new Date(now.getFullYear(), now.getMonth(), d).getTime();
+    if (savingDays.has(key)) count++;
+  }
+  const ratio = daysElapsed > 0 ? count / daysElapsed : 0;
+  if (ratio >= 0.9) return 'A+';
+  if (ratio >= 0.75) return 'A';
+  if (ratio >= 0.5) return 'B';
+  if (ratio >= 0.25) return 'C';
+  return 'D';
+}
+
+function getSavingLevel(balance){
+  if (balance >= GOALS.main) return { name: 'Diamond', icon: '💎' };
+  if (balance >= GOALS.main * 0.5) return { name: 'Gold', icon: '🥇' };
+  if (balance >= GOALS.main * 0.1) return { name: 'Silver', icon: '🥈' };
+  return { name: 'Bronze', icon: '🥉' };
+}
+
+function getPredictedDate(balance){
+  if (balance >= GOALS.main || !records.length) return null;
+  const firstDate = new Date(Math.min(...records.map(r => new Date(r.date).getTime())));
+  const daysSinceStart = Math.max(1, Math.round((Date.now() - firstDate.getTime()) / DAY_MS));
+  const avgDaily = balance / daysSinceStart;
+  if (avgDaily <= 0) return null;
+  const remaining = GOALS.main - balance;
+  const daysNeeded = Math.ceil(remaining / avgDaily);
+  return new Date(Date.now() + daysNeeded * DAY_MS);
+}
+
+function getStatistics(){
+  const balance = getBalance();
+  const deposits = records.filter(r => r.amount > 0);
+  const withdrawals = records.filter(r => r.amount < 0);
+  const totalDeposits = deposits.reduce((s,r) => s + r.amount, 0);
+  const totalWithdrawals = withdrawals.reduce((s,r) => s + Math.abs(r.amount), 0);
+  const dayTotals = getDayTotals();
+  let highestDay = { date: null, amount: 0 };
+  dayTotals.forEach((amount, key) => { if (amount > highestDay.amount) highestDay = { date: key, amount }; });
+  const savingDaysCount = getSavingDaySet().size;
+  const daysSinceStart = records.length
+    ? Math.max(1, Math.round((Date.now() - Math.min(...records.map(r => new Date(r.date).getTime()))) / DAY_MS))
+    : 0;
+
+  return {
+    balance,
+    weekTotal: getWeekTotal(),
+    monthTotal: getMonthTotal(),
+    dailyAverage: daysSinceStart ? balance / daysSinceStart : 0,
+    highestDay,
+    totalDeposits,
+    totalWithdrawals,
+    netSavings: balance,
+    currentStreak: getCurrentStreak(),
+    longestStreak: getLongestStreak(),
+    savingDaysCount,
+    savingPercentage: Math.min(100, (balance / GOALS.main) * 100),
+  };
+}
+
+const ACHIEVEMENTS = [
+  { id:'first100',  label:'เก็บเงินครบ 100 บาท',     icon:'🌟', check:(b) => b >= 100 },
+  { id:'first500',  label:'เก็บเงินครบ 500 บาท',     icon:'✨', check:(b) => b >= 500 },
+  { id:'first1000', label:'เก็บเงินครบ 1,000 บาท',   icon:'💫', check:(b) => b >= 1000 },
+  { id:'first5000', label:'เก็บเงินครบ 5,000 บาท',   icon:'🌈', check:(b) => b >= 5000 },
+  { id:'goal10000', label:'ถึงเป้าหมาย 10,000 บาท',  icon:'👑', check:(b) => b >= 10000 },
+  { id:'streak7',   label:'ออมต่อเนื่อง 7 วัน',       icon:'🔥', check:(b,s) => s.longestStreak >= 7 },
+  { id:'streak30',  label:'ออมต่อเนื่อง 30 วัน',      icon:'🔥', check:(b,s) => s.longestStreak >= 30 },
+  { id:'days100',   label:'ออมครบ 100 วัน',          icon:'🏆', check:(b,s) => s.savingDaysCount >= 100 },
+];
+
+function getUnlockedAchievements(stats){
+  return ACHIEVEMENTS.filter(a => a.check(stats.balance, stats));
+}
+
+/* ================= DOM helpers ================= */
+function el(id){ return document.getElementById(id); }
+function setText(id, value){ const n = el(id); if (n) n.textContent = value; }
+function setMasked(id, value){ const n = el(id); if (n) n.textContent = settings.hidden ? '••••' : value; }
+function setBarWidth(id, percent){ const n = el(id); if (n) n.style.width = Math.max(0, Math.min(100, percent)) + '%'; }
+function getCssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+/* ================= Rendering: Home ================= */
+function renderHome(){
+  const stats = getStatistics();
+  const goalPercent = Math.min(100, (stats.balance / GOALS.main) * 100);
+  const todayTotal = getTodayTotal();
+  const dailyPercent = Math.min(100, (todayTotal / GOALS.daily) * 100);
+  const weeklyPercent = Math.min(100, (stats.weekTotal / GOALS.weekly) * 100);
+  const monthlyPercent = Math.min(100, (stats.monthTotal / GOALS.monthly) * 100);
+
+  setMasked('homeBalance', fmtMoney(stats.balance));
+  setMasked('homeRemaining', fmtMoney(Math.max(0, GOALS.main - stats.balance)));
+  setText('homePercent', goalPercent.toFixed(1));
+  setBarWidth('homeProgressBar', goalPercent);
+
+  updateGoalCard('daily', todayTotal, dailyPercent);
+  updateGoalCard('weekly', stats.weekTotal, weeklyPercent);
+  updateGoalCard('monthly', stats.monthTotal, monthlyPercent);
+
+  setText('streakCount', stats.currentStreak);
+  setText('savingScoreValue', getSavingScore());
+
+  renderGrowthCompanion(goalPercent);
+  renderMissions(stats, todayTotal);
+}
+
+function updateGoalCard(key, value, percent){
+  setMasked(`${key}Value`, fmtMoney(Math.max(0, value)));
+  setText(`${key}Percent`, percent.toFixed(0));
+  setBarWidth(`${key}Bar`, percent);
+}
+
+function renderGrowthCompanion(percent){
+  const treeEl = el('growthTree');
+  const pigEl = el('growthPig');
+  const card = el('growthCard');
+  let treeIcon = '🌱';
+  if (percent >= 90) treeIcon = '🌴';
+  else if (percent >= 70) treeIcon = '🌲';
+  else if (percent >= 40) treeIcon = '🌳';
+  else if (percent >= 20) treeIcon = '🌿';
+  if (treeEl) treeEl.textContent = treeIcon;
+
+  if (percent >= 100){
+    if (pigEl) pigEl.textContent = '🐷✨';
+    if (card) card.classList.add('is-golden');
+  } else {
+    if (pigEl) pigEl.textContent = '🐷';
+    if (card) card.classList.remove('is-golden');
+  }
+}
+
+function triggerCoinAnimation(){
+  const pig = el('growthPig');
+  const card = el('growthCard');
+  if (!pig || !card) return;
+  pig.classList.remove('jump');
+  void pig.offsetWidth;
+  pig.classList.add('jump');
+
+  const coin = document.createElement('div');
+  coin.className = 'coin-drop';
+  coin.textContent = '🪙';
+  card.appendChild(coin);
+  setTimeout(() => coin.remove(), 900);
+}
+
+function renderMissions(stats, todayTotal){
+  const container = el('missionsList');
+  if (!container) return;
+  container.innerHTML = '';
+  const missions = [
+    { label: `ออมวันนี้ให้ครบ ฿${GOALS.daily}`, done: todayTotal >= GOALS.daily },
+    { label: 'ออมต่อเนื่องให้ครบ 7 วัน', done: stats.currentStreak >= 7 },
+    { label: `ออมเดือนนี้ให้ครบ ฿${GOALS.monthly.toLocaleString()}`, done: stats.monthTotal >= GOALS.monthly },
+  ];
+  missions.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'mission' + (m.done ? ' done' : '');
+    div.innerHTML = `<span>${m.done ? '✅' : '⬜'}</span><span>${m.label}</span>`;
+    container.appendChild(div);
+  });
+}
+
+/* ================= Rendering: Stats ================= */
+let chartInstance = null;
+let currentChartPeriod = '7d';
+
+function getChartDataset(period){
+  const now = new Date();
+  if (period === '7d' || period === '30d'){
+    const days = period === '7d' ? 7 : 30;
+    const startDate = startOfDay(new Date(now.getTime() - (days - 1) * DAY_MS));
+    let running = records.filter(r => new Date(r.date) < startDate).reduce((s,r) => s + r.amount, 0);
+    const labels = [], values = [];
+    for (let i = 0; i < days; i++){
+      const day = new Date(startDate.getTime() + i * DAY_MS);
+      const dayNet = records.filter(r => isSameDay(r.date, day)).reduce((s,r) => s + r.amount, 0);
+      running += dayNet;
+      labels.push(day.toLocaleDateString('th-TH', { day:'numeric', month:'short' }));
+      values.push(running);
+    }
+    return { labels, values, type:'line' };
+  }
+  if (period === 'monthly'){
+    const labels = [], values = [];
+    for (let i = 11; i >= 0; i--){
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      labels.push(d.toLocaleDateString('th-TH', { month:'short', year:'2-digit' }));
+      values.push(getMonthTotal(d.getFullYear(), d.getMonth()));
+    }
+    return { labels, values, type:'bar' };
+  }
+  // yearly
+  const labels = [], values = [];
+  for (let i = 4; i >= 0; i--){
+    const y = now.getFullYear() - i;
+    const total = records.filter(r => new Date(r.date).getFullYear() === y).reduce((s,r) => s + r.amount, 0);
+    labels.push(String(y + 543));
+    values.push(total);
+  }
+  return { labels, values, type:'bar' };
+}
+
+function renderChart(period){
+  const canvas = el('savingsChart');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const { labels, values, type } = getChartDataset(period);
+  const ctx = canvas.getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 220);
+  gradient.addColorStop(0, 'rgba(18,184,134,0.35)');
+  gradient.addColorStop(1, 'rgba(18,184,134,0)');
+
+  if (chartInstance) chartInstance.destroy();
+  const mutedColor = getCssVar('--text-muted') || '#8B93A1';
+  const borderColor = getCssVar('--border') || '#262B35';
+
+  chartInstance = new Chart(ctx, {
+    type,
+    data: {
+      labels,
+      datasets: [{
+        label: type === 'line' ? 'ยอดสะสม' : 'ยอดสุทธิ',
+        data: values,
+        borderColor: '#12B886',
+        backgroundColor: type === 'line' ? gradient : 'rgba(18,184,134,0.55)',
+        fill: type === 'line',
+        tension: 0.35,
+        borderRadius: type === 'bar' ? 8 : 0,
+        pointRadius: type === 'line' ? 2 : 0,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: mutedColor, font: { size: 10 } } },
+        y: { grid: { color: borderColor }, ticks: { color: mutedColor, font: { size: 10 } } },
+      },
+      plugins: { legend: { display: false } },
+    },
+  });
+}
+
+function renderHeatmap(){
+  const container = el('heatmap');
+  if (!container) return;
+  container.innerHTML = '';
+  const dayTotals = getDayTotals();
+  const totalWeeks = 26;
+  const today = startOfDay(new Date());
+  for (let i = totalWeeks * 7 - 1; i >= 0; i--){
+    const d = new Date(today.getTime() - i * DAY_MS);
+    const total = dayTotals.get(d.getTime()) || 0;
+    const div = document.createElement('div');
+    div.className = 'heat-cell';
+    div.title = `${fmtDateThai(d)} : ฿${fmtMoney(total)}`;
+    let level = 0;
+    if (total > 0 && total < GOALS.daily) level = 1;
+    else if (total >= GOALS.daily && total < GOALS.daily * 2) level = 2;
+    else if (total >= GOALS.daily * 2) level = 3;
+    div.dataset.level = level;
+    container.appendChild(div);
+  }
+}
+
+function renderAchievements(stats){
+  const grid = el('achievementsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const unlockedIds = getUnlockedAchievements(stats).map(a => a.id);
+  ACHIEVEMENTS.forEach(a => {
+    const unlocked = unlockedIds.includes(a.id);
+    const card = document.createElement('div');
+    card.className = 'achievement-card ' + (unlocked ? 'unlocked' : 'locked');
+    card.innerHTML = `<div class="achievement-icon">${unlocked ? a.icon : '🔒'}</div><div class="achievement-label">${a.label}</div>`;
+    grid.appendChild(card);
+  });
+  checkNewAchievements(unlockedIds);
+}
+
+function checkNewAchievements(unlockedIds){
+  const newOnes = unlockedIds.filter(id => !settings.seenAchievements.includes(id));
+  if (!newOnes.length) return;
+  settings.seenAchievements = Array.from(new Set([...settings.seenAchievements, ...newOnes]));
+  saveSettings();
+  if (newOnes.length === 1){
+    const a = ACHIEVEMENTS.find(x => x.id === newOnes[0]);
+    showToast(`🎉 ปลดล็อกความสำเร็จ: ${a.icon} ${a.label}`);
+  } else {
+    showToast(`🎉 ปลดล็อก ${newOnes.length} ความสำเร็จใหม่!`);
+  }
+  launchConfetti();
+}
+
+function renderStats(){
+  const stats = getStatistics();
+  setText('statDailyAvg', '฿' + fmtMoney(stats.dailyAverage));
+  setText('statWeekTotal', '฿' + fmtMoney(stats.weekTotal));
+  setText('statMonthTotal', '฿' + fmtMoney(stats.monthTotal));
+  setText('statHighestDay', stats.highestDay.date ? `${fmtDateThai(stats.highestDay.date)} (฿${fmtMoney(stats.highestDay.amount)})` : '-');
+  setText('statTotalDeposits', '฿' + fmtMoney(stats.totalDeposits));
+  setText('statTotalWithdrawals', '฿' + fmtMoney(stats.totalWithdrawals));
+  setText('statNetSavings', '฿' + fmtMoney(stats.netSavings));
+  setText('statLongestStreak', stats.longestStreak + ' วัน');
+
+  const level = getSavingLevel(stats.balance);
+  setText('savingLevelIcon', level.icon);
+  setText('savingLevelName', level.name);
+
+  const predicted = getPredictedDate(stats.balance);
+  setText('predictedDate', predicted
+    ? fmtDateThai(predicted)
+    : (stats.balance >= GOALS.main ? 'ถึงเป้าหมายแล้ว 🎉' : 'ยังไม่มีข้อมูลเพียงพอ'));
+
+  renderAchievements(stats);
+  renderHeatmap();
+  renderChart(currentChartPeriod);
+}
+
+/* ================= Rendering: Calendar ================= */
+let calMonth = new Date().getMonth();
+let calYear = new Date().getFullYear();
+const MONTH_NAMES_TH = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+function renderCalendar(){
+  const grid = el('calendarGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  setText('calendarTitle', `${MONTH_NAMES_TH[calMonth]} ${calYear + 543}`);
+
+  const dayTotals = getDayTotals();
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++){
+    const blank = document.createElement('div');
+    blank.className = 'cal-cell empty';
+    grid.appendChild(blank);
+  }
+  for (let d = 1; d <= daysInMonth; d++){
+    const date = new Date(calYear, calMonth, d);
+    const total = dayTotals.get(date.getTime()) || 0;
+    const cell = document.createElement('button');
+    cell.type = 'button';
+    cell.className = 'cal-cell';
+    if (total >= GOALS.daily) cell.classList.add('saved');
+    else if (total > 0) cell.classList.add('low');
+    cell.textContent = d;
+    cell.addEventListener('click', () => openDayModal(date));
+    grid.appendChild(cell);
+  }
+}
+
+function changeCalendarMonth(step){
+  calMonth += step;
+  if (calMonth < 0){ calMonth = 11; calYear--; }
+  if (calMonth > 11){ calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+function openDayModal(date){
+  const dayRecords = records.filter(r => isSameDay(r.date, date));
+  const deposits = dayRecords.filter(r => r.amount > 0).reduce((s,r) => s + r.amount, 0);
+  const withdrawals = dayRecords.filter(r => r.amount < 0).reduce((s,r) => s + Math.abs(r.amount), 0);
+  setText('dayModalDate', fmtDateThai(date));
+  setText('dayModalDeposit', '฿' + fmtMoney(deposits));
+  setText('dayModalWithdraw', '฿' + fmtMoney(withdrawals));
+  setText('dayModalTotal', '฿' + fmtMoney(deposits - withdrawals));
+  showModal('modal-day');
+}
+
+/* ================= Rendering: History ================= */
+let historyFilter = 'all';
+let historySearch = '';
+let editingIndex = null;
+
+function renderHistory(){
+  const list = el('historyList');
+  if (!list) return;
+  list.innerHTML = '';
+
+  let filtered = records.map((r, index) => ({ ...r, index }))
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  if (historyFilter === 'deposit') filtered = filtered.filter(r => r.amount > 0);
+  if (historyFilter === 'withdraw') filtered = filtered.filter(r => r.amount < 0);
+
+  if (historySearch.trim()){
+    const q = historySearch.trim().toLowerCase();
+    filtered = filtered.filter(r =>
+      fmtDateThai(r.date).toLowerCase().includes(q) ||
+      r.type.toLowerCase().includes(q) ||
+      String(r.amount).includes(q)
+    );
+  }
+
+  if (!filtered.length){
+    list.innerHTML = '<p class="empty-state">ไม่พบรายการ</p>';
+    return;
+  }
+
+  filtered.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'history-row ' + (r.amount > 0 ? 'is-deposit' : 'is-withdraw');
+    row.innerHTML = `
+      <div class="history-info">
+        <span class="history-type">${r.amount > 0 ? '➕' : '➖'} ${r.type}</span>
+        <span class="history-date">${fmtDateThai(r.date)}</span>
+      </div>
+      <div class="history-amount">${r.amount > 0 ? '+' : '-'}฿${fmtMoney(Math.abs(r.amount))}</div>
+      <div class="history-actions">
+        <button class="icon-btn small edit-btn" data-index="${r.index}">✏️</button>
+        <button class="icon-btn small delete-btn" data-index="${r.index}">🗑️</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+
+  list.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => openEditModal(Number(btn.dataset.index)));
+  });
+  list.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (confirm('ลบรายการนี้ใช่หรือไม่?')){
+        records.splice(Number(btn.dataset.index), 1);
+        saveRecords();
+        renderAll();
+      }
+    });
+  });
+}
+
+function openEditModal(index){
+  editingIndex = index;
+  const r = records[index];
+  el('editType').value = r.amount > 0 ? 'deposit' : 'withdraw';
+  el('editAmount').value = Math.abs(r.amount);
+  el('editDate').value = toDatetimeLocal(new Date(r.date));
+  showModal('modal-edit');
+}
+
+function saveEdit(){
+  if (editingIndex === null) return;
+  const type = el('editType').value;
+  const amount = Number(el('editAmount').value);
+  const dateVal = el('editDate').value;
+  if (!amount || amount <= 0){ alert('กรอกจำนวนเงินให้ถูกต้อง'); return; }
+  if (!dateVal){ alert('กรอกวันที่ให้ถูกต้อง'); return; }
+
+  records[editingIndex] = {
+    type: type === 'deposit' ? 'เพิ่ม' : 'ถอน',
+    amount: type === 'deposit' ? amount : -amount,
+    date: new Date(dateVal).toISOString(),
+  };
+  saveRecords();
+  hideModal('modal-edit');
+  editingIndex = null;
+  renderAll();
+}
+
+/* ================= Rendering: Settings ================= */
+function renderSettings(){
+  el('themeSelect').value = settings.theme;
+  el('hiddenModeToggle').checked = settings.hidden;
+  el('reminderTimeInput').value = settings.reminderTime;
+  el('reminderEnabledToggle').checked = settings.reminderEnabled;
+}
+
+/* ================= Theme / hidden mode ================= */
+function applyTheme(){
+  document.querySelector('.app').setAttribute('data-theme', settings.theme);
+  const btn = el('themeToggle');
+  if (btn) btn.textContent = settings.theme === 'dark' ? '☀️' : '🌙';
+}
+function updateHideIcon(){
+  const btn = el('hideToggle');
+  if (btn) btn.textContent = settings.hidden ? '🙈' : '👁️';
+}
+
+/* ================= Modal helpers ================= */
+function showModal(id){ const m = el(id); if (m) m.classList.add('open'); }
+function hideModal(id){ const m = el(id); if (m) m.classList.remove('open'); }
+
+/* ================= Toast & confetti ================= */
+function showToast(message){
+  const container = el('toastContainer');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3200);
+}
+
+function launchConfetti(){
+  const layer = el('confettiLayer');
+  if (!layer) return;
+  const colors = ['#12B886', '#F5B833', '#FB6B5B', '#4DABF7'];
+  for (let i = 0; i < 36; i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = (Math.random() * 0.3) + 's';
+    piece.style.setProperty('--rot', (Math.random() * 360) + 'deg');
+    layer.appendChild(piece);
+    setTimeout(() => piece.remove(), 2200);
+  }
+}
+
+/* ================= Reminder ================= */
+function checkReminder(){
+  if (!settings.reminderEnabled) return;
+  const now = new Date();
+  const hhmm = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  const todayKey = startOfDay(now).toISOString().slice(0,10);
+  if (hhmm === settings.reminderTime && settings.lastReminderDate !== todayKey){
+    settings.lastReminderDate = todayKey;
+    saveSettings();
+    const remaining = Math.max(0, GOALS.daily - getTodayTotal());
+    const message = remaining > 0
+      ? `🐷 อย่าลืมออมเงินวันนี้ เหลืออีก ฿${fmtMoney(remaining)} ถึงเป้าหมายวันนี้`
+      : '🐷 เยี่ยมมาก! วันนี้ออมครบเป้าหมายแล้ว';
+    if ('Notification' in window && Notification.permission === 'granted'){
+      new Notification('Piggy Bank', { body: message });
+    } else {
+      showToast(message);
+    }
+  }
+}
+setInterval(checkReminder, 30000);
+
+/* ================= Add / withdraw ================= */
+function addMoney(amount){
+  records.push({ type: 'เพิ่ม', amount, date: new Date().toISOString() });
+  saveRecords();
+  triggerCoinAnimation();
+  renderAll();
+}
+function withdrawMoney(amount){
+  records.push({ type: 'ถอน', amount: -amount, date: new Date().toISOString() });
+  saveRecords();
+  renderAll();
+}
+
+/* ================= Navigation ================= */
+function switchPage(page){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  el('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  document.querySelector('.pages').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ================= Render all ================= */
+function renderAll(){
+  renderHome();
+  renderStats();
+  renderCalendar();
+  renderHistory();
+  renderSettings();
+}
+
+/* ================= Event wiring ================= */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchPage(btn.dataset.page));
+  });
+
+  el('quickAddBtn').addEventListener('click', () => {
+    const input = el('quickAmount');
+    const amount = Number(input.value);
+    if (!amount || amount <= 0){ alert('กรอกจำนวนเงิน'); return; }
+    addMoney(amount);
+    input.value = '';
+  });
+  el('quickWithdrawBtn').addEventListener('click', () => {
+    const input = el('quickAmount');
+    const amount = Number(input.value);
+    if (!amount || amount <= 0){ alert('กรอกจำนวนเงิน'); return; }
+    withdrawMoney(amount);
+    input.value = '';
+  });
+
+  document.querySelectorAll('.period-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentChartPeriod = btn.dataset.period;
+      renderChart(currentChartPeriod);
+    });
+  });
+
+  el('calPrevBtn').addEventListener('click', () => changeCalendarMonth(-1));
+  el('calNextBtn').addEventListener('click', () => changeCalendarMonth(1));
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      historyFilter = btn.dataset.filter;
+      renderHistory();
+    });
+  });
+  el('historySearchInput').addEventListener('input', (e) => {
+    historySearch = e.target.value;
+    renderHistory();
+  });
+
+  document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', () => hideModal(btn.dataset.close));
+  });
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('open'); });
+  });
+  el('saveEditBtn').addEventListener('click', saveEdit);
+
+  el('themeToggle').addEventListener('click', () => {
+    settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
+    saveSettings();
+    applyTheme();
+    renderStats();
+  });
+  el('hideToggle').addEventListener('click', () => {
+    settings.hidden = !settings.hidden;
+    saveSettings();
+    updateHideIcon();
+    renderHome();
+  });
+  el('themeSelect').addEventListener('change', (e) => {
+    settings.theme = e.target.value;
+    saveSettings();
+    applyTheme();
+    renderStats();
+  });
+  el('hiddenModeToggle').addEventListener('change', (e) => {
+    settings.hidden = e.target.checked;
+    saveSettings();
+    updateHideIcon();
+    renderHome();
+  });
+  el('reminderTimeInput').addEventListener('change', (e) => {
+    settings.reminderTime = e.target.value;
+    saveSettings();
+  });
+  el('reminderEnabledToggle').addEventListener('change', (e) => {
+    settings.reminderEnabled = e.target.checked;
+    saveSettings();
+    if (settings.reminderEnabled && 'Notification' in window && Notification.permission === 'default'){
+      Notification.requestPermission();
+    }
+  });
+
+  el('exportBtn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `piggy-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+  el('importBtn').addEventListener('click', () => el('importInput').click());
+  el('importInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(reader.result);
+        if (!Array.isArray(imported)) throw new Error('invalid');
+        if (confirm('นำเข้าข้อมูลนี้จะแทนที่รายการปัจจุบันทั้งหมด ต้องการดำเนินการต่อหรือไม่?')){
+          records = imported;
+          saveRecords();
+          renderAll();
+          showToast('นำเข้าข้อมูลสำเร็จ');
+        }
+      } catch (err) {
+        alert('ไฟล์ไม่ถูกต้อง');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+  el('resetBtn').addEventListener('click', () => {
+    if (confirm('ต้องการล้างข้อมูลการออมทั้งหมดใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้')){
+      records = [];
+      saveRecords();
+      renderAll();
+      showToast('ล้างข้อมูลเรียบร้อย');
+    }
+  });
+
+  applyTheme();
+  updateHideIcon();
+  renderAll();
+});
+</script>
+</body>
+</html>
