@@ -1,684 +1,420 @@
-<!DOCTYPE html>  <html lang="th">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Piggy Bank</title>  <link rel="manifest" href="manifest.json">  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <style>  
-*{  
-margin:0;  
-padding:0;  
-box-sizing:border-box;  
-font-family:Arial,sans-serif;  
-}  
-  
-body{  
-background:#f5f5f5;  
-padding:15px;  
-}  
-  
-.container{  
-max-width:600px;  
-margin:auto;  
-}  
-  
-.card{  
-background:white;  
-padding:15px;  
-border-radius:15px;  
-margin-bottom:15px;  
-box-shadow:0 2px 10px rgba(0,0,0,.08);  
-}  
-  
-h1{  
-text-align:center;  
-margin-bottom:15px;  
-}  
-  
-.balance{  
-font-size:32px;  
-font-weight:bold;  
-color:#2e7d32;  
-text-align:center;  
-}  
-  
-.goal{  
-margin-top:10px;  
-font-size:18px;  
-text-align:center;  
-}  
-  
-.progress-container{  
-height:22px;  
-background:#ddd;  
-border-radius:30px;  
-overflow:hidden;  
-margin-top:10px;  
-}  
-  
-.progress-bar{  
-height:100%;  
-width:0%;  
-background:#4CAF50;  
-transition:.4s;  
-}  
-  
-.stats{  
-display:grid;  
-grid-template-columns:1fr 1fr;  
-gap:10px;  
-margin-top:15px;  
-}  
-  
-.stat-box{  
-background:#fafafa;  
-padding:10px;  
-border-radius:10px;  
-text-align:center;  
-}  
-  
-input{  
-width:100%;  
-padding:12px;  
-font-size:16px;  
-margin-top:10px;  
-border:1px solid #ccc;  
-border-radius:10px;  
-}  
-  
-button{  
-width:100%;  
-padding:12px;  
-border:none;  
-border-radius:10px;  
-margin-top:10px;  
-font-size:16px;  
-cursor:pointer;  
-}  
-  
-.add{  
-background:#4CAF50;  
-color:white;  
-}  
-  
-.withdraw{  
-background:#f44336;  
-color:white;  
-}  
-  
-.delete-btn{  
-background:#777;  
-color:white;  
-padding:5px 8px;  
-width:auto;  
-}  
-  
-table{  
-width:100%;  
-border-collapse:collapse;  
-}  
-  
-th,td{  
-padding:8px;  
-border-bottom:1px solid #ddd;  
-text-align:center;  
-}  
-  
-.badge{  
-display:inline-block;  
-padding:6px 12px;  
-border-radius:20px;  
-background:#eee;  
-margin:4px;  
-}  
-  
-canvas{  
-margin-top:10px;  
-}  
-  
-#calendar{  
-display:grid;  
-grid-template-columns:repeat(7,1fr);  
-gap:5px;  
-margin-top:10px;  
-}  
-  
-.day{  
-height:32px;  
-display:flex;  
-justify-content:center;  
-align-items:center;  
-border-radius:6px;  
-background:#eee;  
-font-size:12px;  
-}  
-  
-.saved{  
-background:#4CAF50;  
-color:white;  
-}  
-  .low-save{  
-background:#f44336;  
-color:white;  
-  }  
-</style>  </head>  <body>  <div class="container">  <h1>🐷 Piggy Bank</h1>  <div class="card">  <div class="balance">  
-฿ <span id="balance">0</span>  
-</div>    <div style="text-align:center;margin-top:10px;">  
-<button onclick="toggleHide()">  
-🙈 โหมดลืมเงิน  
-</button>  
-  </div>  <div class="goal">  
-🎯 เป้าหมาย 10,000 บาท  
-</div>    <div id="progressContainer" class="progress-container">  
-  <div id="progressBar" class="progress-bar"></div>  
-  </div>  <p style="text-align:center;margin-top:8px;">  
-<span id="percent">0</span>% สำเร็จ  
-</p>  <p style="text-align:center;">  
-เหลืออีก ฿<span id="remaining">10000</span>  
-</p>  </div>  <div class="card">  <p id="today"></p>  <input  
-type="number"  
-id="amount"  
-placeholder="จำนวนเงิน">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Piggy Bank V2</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root{
+    --font-display:'Sora',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'JetBrains Mono',monospace;
+    --primary:#12B886;
+    --primary-dark:#0CA678;
+    --gold:#F5B833;
+    --coral:#FB6B5B;
+    --radius-lg:24px;
+    --radius-md:16px;
+    --radius-sm:10px;
+  }
+  [data-theme="dark"]{
+    --bg:#0B0E13;
+    --bg-elevated:#12151C;
+    --card:#171B23;
+    --card-alt:#1D222C;
+    --text:#F2F4F7;
+    --text-muted:#8B93A1;
+    --border:#262B35;
+    --shadow:rgba(0,0,0,.45);
+  }
+  [data-theme="light"]{
+    --bg:#F3F5F8;
+    --bg-elevated:#FFFFFF;
+    --card:#FFFFFF;
+    --card-alt:#F3F5F8;
+    --text:#12151C;
+    --text-muted:#6B7280;
+    --border:#E6E9EE;
+    --shadow:rgba(15,23,42,.10);
+  }
 
-<button class="add"  
-onclick="addMoney()">
-➕ เพิ่มเงิน
-</button>
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+  }
+  button, input, select{ font-family:var(--font-body); }
 
-<button class="withdraw"  
-onclick="withdrawMoney()">
-➖ ถอนเงิน
-</button>
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    background:var(--bg);
+    position:relative;
+  }
 
-</div>  <div class="card">  <div class="stats">  <div class="stat-box">  
-<p>📅 สัปดาห์นี้</p>  
-<h3>฿<span id="weekTotal">0</span></h3>  
-</div>  <div class="stat-box">  
-<p>📆 เดือนนี้</p>  
-<h3>฿<span id="monthTotal">0</span></h3>  
-</div>  <div class="stat-box">  
-<p>💰 ทั้งหมด</p>  
-<h3>฿<span id="allTotal">0</span></h3>  
-</div>  <div class="stat-box">  
-<p>🎯 เป้าหมาย</p>  
-<h3>10,000</h3>  
-</div>  </div>  </div>  <div class="card">  <h3>🏆 Achievement</h3>  <div id="badges">  
-<span class="badge">25%</span>  
-<span class="badge">50%</span>  
-<span class="badge">75%</span>  
-<span class="badge">100%</span>  
-</div>  </div>  <div class="card">  <h3>📈 กราฟการออม</h3>  <canvas id="chart"></canvas>
+  /* Topbar */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 18px;
+    background:var(--bg);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar h1{
+    font-family:var(--font-display);
+    font-size:19px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .v2-badge{
+    font-size:11px;
+    background:var(--primary);
+    color:#04231a;
+    padding:2px 8px;
+    border-radius:20px;
+    font-family:var(--font-body);
+    font-weight:700;
+  }
+  .topbar-actions{ display:flex; gap:8px; }
+  .icon-btn{
+    background:var(--card);
+    border:1px solid var(--border);
+    width:38px; height:38px;
+    border-radius:50%;
+    font-size:16px;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .icon-btn.small{ width:30px; height:30px; font-size:13px; }
+  .icon-btn:active{ transform:scale(.94); }
 
-</div>  <div class="card">  <h3>📅 ปฏิทินการออม</h3>  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">  
-<button onclick="changeMonth(-1)" style="width:auto;">◀</button>  <span id="calendarTitle"></span>
+  /* Pages */
+  .pages{ flex:1; padding:14px 16px 100px; }
+  .page{ display:none; animation:fadeIn .25s ease; }
+  .page.active{ display:block; }
+  @keyframes fadeIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
 
-<button onclick="changeMonth(1)" style="width:auto;">▶</button>
+  /* Bottom nav */
+  .bottom-nav{
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:480px;
+    display:flex;
+    background:var(--bg-elevated);
+    border-top:1px solid var(--border);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+    z-index:80;
+  }
+  .nav-btn{
+    flex:1; background:none; border:none;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    font-size:10.5px; color:var(--text-muted);
+    padding:6px 2px; cursor:pointer; border-radius:12px;
+  }
+  .nav-btn .nav-icon{ font-size:18px; }
+  .nav-btn.active{ color:var(--primary); font-weight:700; background:rgba(18,184,134,.13); }
 
-</div>  <div id="calendar"></div>  </div>  <div class="card">  <div class="card">  <h3>📊 สถิติรายเดือน</h3>  <div id="monthlyStats"></div>  </div>  
-<h3>📝 ประวัติรายการ</h3>  <table>  <thead>  
-<tr>  
-<th>วันที่</th>  
-<th>รายการ</th>  
-<th>จำนวน</th>  
-<th></th>  
-</tr>  
-</thead>  <tbody id="history"></tbody>  </table>  </div>  </div>  <script>  
-  
-const GOAL = 10000;  
-  
-let records =  
-JSON.parse(  
-localStorage.getItem("piggyRecords")  
-) || [];  
-    
-  let currentMonth = new Date().getMonth();  
-let currentYear = new Date().getFullYear();  
-  
-document.getElementById("today")  
-.innerText =  
-"วันนี้ : " +  
-new Date()  
-.toLocaleDateString("th-TH");  
-  
-function saveData(){  
-localStorage.setItem(  
-"piggyRecords",  
-JSON.stringify(records)  
-);  
-}  
-  
-function addMoney(){  
-  
-let amount =  
-Number(  
-document.getElementById("amount").value  
-);  
-  
-if(amount<=0){  
-alert("กรอกจำนวนเงิน");  
-return;  
-}  
-  
-records.push({  
-type:"เพิ่ม",  
-amount:amount,  
-date:new Date().toISOString()  
-});  
-  
-saveData();  
-render();  
-  
-document.getElementById("amount").value="";  
-}  
-  
-function withdrawMoney(){  
-  
-let amount =  
-Number(  
-document.getElementById("amount").value  
-);  
-  
-if(amount<=0){  
-alert("กรอกจำนวนเงิน");  
-return;  
-}  
-  
-records.push({  
-type:"ถอน",  
-amount:-amount,  
-date:new Date().toISOString()  
-});  
-  
-saveData();  
-render();  
-  
-document.getElementById("amount").value="";  
-}  
-  function deleteRecord(index){  
-records.splice(index,1);  
-saveData();  
-render();  
-}  
-  
-let chart;  
-  
-function render(){  
-  
-let balance = 0;  
-let weekTotal = 0;  
-let monthTotal = 0;  
-  
-const now = new Date();  
-  
-const history =  
-document.getElementById("history");  
-  
-history.innerHTML = "";  
-  
-records.forEach((item,index)=>{  
-  
-balance += item.amount;  
-  
-  let d = new Date(item.date);  
-  
-let diff =  
-(now-d)/(1000*60*60*24);  
-  
-if(diff <= 7){  
-weekTotal += item.amount;  
-}  
-  
-if(  
-d.getMonth()===now.getMonth()  
-&&  
-d.getFullYear()===now.getFullYear()  
-){  
-monthTotal += item.amount;  
-}  
-  
-history.innerHTML += `  
-<tr>  
-<td>${d.toLocaleDateString("th-TH")}</td>  
-<td>${item.type}</td>  
-<td>฿${item.amount}</td>  
-<td>  
-<button  
-class="delete-btn"  
-onclick="deleteRecord(${index})">  
-ลบ  
-</button>  
-</td>  
-</tr>  
-`;  
-  
-});  
-  
-  let percent =  
-  Math.min(  
-  100,  
-  ((balance/GOAL)*100).toFixed(1)  
-  );  
-  
-  if(hiddenMode){  
-  
-  document.getElementById("balance").innerText = "••••••";  
-  document.getElementById("percent").innerText = "•••";  
-  document.getElementById("weekTotal").innerText = "•••";  
-  document.getElementById("monthTotal").innerText = "•••";  
-  document.getElementById("allTotal").innerText = "••••••";  
-  document.getElementById("remaining").innerText = "••••••";  
-  
-  }else{  
-  
-  document.getElementById("balance")  
-  .innerText =  
-  balance.toLocaleString();  
-  
-  document.getElementById("weekTotal")  
-  .innerText =  
-  weekTotal.toLocaleString();  
-  
-  document.getElementById("monthTotal")  
-  .innerText =  
-  monthTotal.toLocaleString();  
-  
-  document.getElementById("allTotal")  
-  .innerText =  
-  balance.toLocaleString();  
-  
-  document.getElementById("percent")  
-  .innerText = percent;  
-  
-  document.getElementById("remaining")  
-  .innerText =  
-  Math.max(  
-  0,  
-  GOAL-balance  
-  ).toLocaleString();  
-  
-  }  
-  
-  if(hiddenMode){  
-  
-  document  
-  .getElementById("progressContainer")  
-  .style.display = "none";  
-  
-  }else{  
-  
-  document  
-  .getElementById("progressContainer")  
-  .style.display = "block";  
-  
-  document  
-  .getElementById("progressBar")  
-  .style.width =  
-  percent + "%";  
-  
-  }  
-  
-achievement(percent);  
-  
-  drawCalendar();  
-  
-  drawChart();  
-  
-  drawMonthlyStats();  
-  
-}  
-  
-function achievement(percent){  
-  
-if(percent >= 100){  
-alert("👑 ยินดีด้วย! ถึงเป้าหมายแล้ว");  
-}  
-else if(percent >= 75){  
-console.log("🥇 75%");  
-}  
-else if(percent >= 50){  
-console.log("🥈 50%");  
-}  
-else if(percent >= 25){  
-console.log("🥉 25%");  
-}  
-  
-}  
-  
-  function drawCalendar(){  
-  
-  const calendar =  
-  document.getElementById("calendar");  
-  
-  calendar.innerHTML = "";  
-  
-  const monthNames = [  
-  "ม.ค.","ก.พ.","มี.ค.","เม.ย.",  
-  "พ.ค.","มิ.ย.","ก.ค.","ส.ค.",  
-  "ก.ย.","ต.ค.","พ.ย.","ธ.ค."  
-  ];  
-  
-  document.getElementById("calendarTitle")  
-  .innerText =  
-  monthNames[currentMonth] +  
-  " " +  
-  (currentYear + 543);  
-  
-  const dayTotals = {};  
-  
-  records.forEach(r=>{  
-  
-  const d = new Date(r.date);  
-  
-  if(  
-  d.getMonth() === currentMonth &&  
-  d.getFullYear() === currentYear  
-  ){  
-  
-  const day = d.getDate();  
-  
-  if(!dayTotals[day]){  
-  dayTotals[day] = 0;  
-  }  
-  
-  dayTotals[day] += r.amount;  
-  
-  }  
-  
-  });  
-  
-  const daysInMonth =  
-  new Date(  
-  currentYear,  
-  currentMonth + 1,  
-  0  
-  ).getDate();  
-  
-  for(let i=1;i<=daysInMonth;i++){  
-  
-  const div =  
-  document.createElement("div");  
-  
-  div.className = "day";  
-  
-  if(dayTotals[i] >= 60){  
-  
-  div.classList.add("saved");  
-  
-  }else if(dayTotals[i] > 0){  
-  
-  div.classList.add("low-save");  
-  
-  }  
-  
-  div.innerText = i;  
-  
-  calendar.appendChild(div);  
-  
-  }  
-  
-  }  
-    
-  function changeMonth(step){  
-  
-currentMonth += step;  
-  
-if(currentMonth < 0){  
-currentMonth = 11;  
-currentYear--;  
-}  
-  
-if(currentMonth > 11){  
-currentMonth = 0;  
-currentYear++;  
-}  
-  
-    drawCalendar();  
-    drawChart();  
-  
-  }  
-  
-function drawChart(){  
-  
-const daily = {};  
-  
-let running = 0;  
-  
-  records  
-  .filter(r=>{  
-  
-  const d = new Date(r.date);  
-  
-  return (  
-  d.getMonth() === currentMonth &&  
-  d.getFullYear() === currentYear  
-  );  
-  
-  })  
-  .sort((a,b)=>  
-  new Date(a.date)  
-  -  
-  new Date(b.date)  
-  )  
-  .forEach(r=>{  
-  
-running += r.amount;  
-  
-let day =  
-new Date(r.date)  
-.toLocaleDateString(  
-"th-TH"  
-);  
-  
-daily[day] = running;  
-  
-});  
-  
-const labels =  
-Object.keys(daily);  
-  
-const values =  
-Object.values(daily);  
-  
-const ctx =  
-document  
-.getElementById("chart");  
-  
-if(chart){  
-chart.destroy();  
-}  
-    
-  
-chart =  
-new Chart(ctx,{  
-type:"line",  
-data:{  
-labels:labels,  
-datasets:[{  
-label:"เงินสะสม",  
-data:values,  
-fill:true,  
-tension:.3  
-}]  
-},  
-options:{  
-responsive:true  
-}  
-});  
-  
-}  
-  
-  
-let hiddenMode = true;  
-function drawMonthlyStats(){  
-  
-const stats = {};  
-  
-records.forEach(r=>{  
-  
-const d = new Date(r.date);  
-  
-const key =  
-d.toLocaleDateString(  
-"th-TH",  
-{  
-month:"short",  
-year:"numeric"  
-}  
-);  
-  
-if(!stats[key]){  
-stats[key] = 0;  
-}  
-  
-stats[key] += r.amount;  
-  
-});  
-  
-const box =  
-document.getElementById(  
-"monthlyStats"  
-);  
-  
-box.innerHTML = "";  
-  
-Object.entries(stats)  
-.reverse()  
-.forEach(([month,total])=>{  
-  
-box.innerHTML += `  
-<p style="  
-padding:8px;  
-border-bottom:1px solid #ddd;  
-display:flex;  
-justify-content:space-between;  
-">  
-<span>${month}</span>  
-<b>฿${total.toLocaleString()}</b>  
-</p>  
-`;  
-  
-});  
-  
-}  
-function toggleHide(){  
-  
-hiddenMode = !hiddenMode;  
-  
-if(hiddenMode){  
-  
-document.getElementById("balance").innerText = "••••••";  
-document.getElementById("percent").innerText = "•••";  
-    
-document.getElementById("weekTotal").innerText = "•••";  
-document.getElementById("monthTotal").innerText = "•••";  
-document.getElementById("allTotal").innerText = "••••••"; document.getElementById("remaining").innerText = "••••••";  
-}else{  
-    
-    
-  
-render();  
-  
-}  
-  
-  }  
-render();  
-  
-</script>  </body>  
-</html>
+  /* Cards */
+  .card{
+    background:var(--card);
+    border-radius:var(--radius-lg);
+    padding:18px;
+    margin-bottom:14px;
+    box-shadow:0 10px 30px var(--shadow);
+    border:1px solid var(--border);
+  }
+  .card h3{ font-family:var(--font-display); font-size:15px; margin-bottom:12px; }
+
+  /* Balance card */
+  .balance-value{ font-family:var(--font-mono); font-size:38px; font-weight:700; text-align:center; letter-spacing:-1px; }
+  .balance-currency{ font-size:20px; opacity:.7; }
+  .balance-label{ text-align:center; color:var(--text-muted); font-size:13px; margin-top:2px; }
+  .progress-track{ height:14px; background:var(--card-alt); border-radius:20px; overflow:hidden; margin-top:16px; }
+  .progress-fill{ height:100%; width:0%; background:linear-gradient(90deg,var(--primary),var(--primary-dark)); border-radius:20px; transition:width .6s cubic-bezier(.22,1,.36,1); }
+  .balance-meta{ display:flex; justify-content:space-between; margin-top:10px; font-size:12.5px; color:var(--text-muted); }
+
+  /* Growth companion (signature element) */
+  .growth-card{
+    background:linear-gradient(135deg,#0E6E4E,#12B886 65%,#7ED6A5);
+    border-radius:var(--radius-lg);
+    padding:22px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    color:#fff;
+    margin-bottom:14px;
+    transition:box-shadow .4s ease, background .4s ease;
+  }
+  .growth-card.is-golden{
+    background:linear-gradient(135deg,#B8830A,#F5B833 55%,#FDE5A5);
+    box-shadow:0 0 36px rgba(245,184,51,.55);
+  }
+  .growth-scene{ display:flex; align-items:flex-end; justify-content:center; gap:20px; font-size:46px; position:relative; }
+  .growth-tree, .growth-pig{ transition:transform .3s ease; }
+  .growth-percent{ margin-top:10px; font-family:var(--font-mono); font-size:20px; font-weight:700; }
+  .growth-caption{ font-size:12px; opacity:.9; margin-top:2px; }
+  @keyframes pigJump{
+    0%{ transform:translateY(0) rotate(0deg); }
+    30%{ transform:translateY(-16px) rotate(-8deg); }
+    55%{ transform:translateY(0) rotate(5deg); }
+    100%{ transform:translateY(0) rotate(0deg); }
+  }
+  .growth-pig.jump{ animation:pigJump .6s ease; }
+  @keyframes coinFall{
+    0%{ transform:translate(-50%,-30px) scale(1); opacity:1; }
+    100%{ transform:translate(-50%,50px) scale(.6); opacity:0; }
+  }
+  .coin-drop{ position:absolute; left:50%; top:0; font-size:22px; animation:coinFall .9s ease forwards; pointer-events:none; }
+
+  /* Quick add */
+  .quick-add input{
+    width:100%; padding:14px; font-size:16px; border-radius:14px;
+    border:1px solid var(--border); background:var(--card-alt); color:var(--text);
+    margin-bottom:10px; font-family:var(--font-mono);
+  }
+  .btn-row{ display:flex; gap:10px; }
+  .btn{ flex:1; padding:14px; border:none; border-radius:14px; font-size:15px; font-weight:700; cursor:pointer; transition:transform .15s ease; }
+  .btn:active{ transform:scale(.96); }
+  .btn-add{ background:var(--primary); color:#04231a; }
+  .btn-withdraw{ background:var(--coral); color:#2b0d09; }
+  .btn-secondary{ background:var(--card-alt); color:var(--text); border:1px solid var(--border); }
+  .btn-danger{ background:rgba(251,107,91,.15); color:var(--coral); border:1px solid var(--coral); }
+
+  /* Goal grid */
+  .goal-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .goal-card{ background:var(--card-alt); border-radius:var(--radius-md); padding:12px; text-align:center; }
+  .goal-card .goal-title{ font-size:11.5px; color:var(--text-muted); }
+  .goal-card .goal-value{ font-family:var(--font-mono); font-size:14px; margin:5px 0 6px; }
+  .goal-bar-track{ height:7px; background:var(--border); border-radius:10px; overflow:hidden; }
+  .goal-bar-fill{ height:100%; background:var(--primary); border-radius:10px; transition:width .5s ease; }
+  .goal-card .goal-percent{ font-size:10.5px; color:var(--text-muted); margin-top:5px; }
+
+  /* Streak / score row */
+  .stat-row{ display:flex; gap:10px; }
+  .stat-pill{ flex:1; background:var(--card-alt); border-radius:var(--radius-md); padding:14px; text-align:center; }
+  .stat-pill .pill-value{ font-family:var(--font-mono); font-size:22px; font-weight:700; }
+  .stat-pill .pill-label{ font-size:12px; color:var(--text-muted); margin-top:2px; }
+
+  /* Missions */
+  .mission{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); font-size:13.5px; }
+  .mission:last-child{ border-bottom:none; }
+  .mission.done{ color:var(--primary); text-decoration:line-through; opacity:.75; }
+
+  /* Period toggle + chart */
+  .period-toggle{ display:flex; gap:6px; margin-bottom:14px; background:var(--card-alt); padding:4px; border-radius:14px; }
+  .period-btn{ flex:1; background:none; border:none; padding:8px 0; border-radius:10px; font-size:12.5px; color:var(--text-muted); cursor:pointer; }
+  .period-btn.active{ background:var(--primary); color:#04231a; font-weight:700; }
+  .chart-wrap{ height:220px; position:relative; }
+
+  /* Stats grid */
+  .stats-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .stat-box{ background:var(--card-alt); border-radius:var(--radius-md); padding:12px; }
+  .stat-box .stat-label{ font-size:11px; color:var(--text-muted); }
+  .stat-box .stat-value{ font-family:var(--font-mono); font-size:15px; margin-top:4px; font-weight:700; }
+
+  .level-row{ display:flex; align-items:center; gap:14px; }
+  .level-icon{ font-size:34px; }
+  .level-name{ font-family:var(--font-display); font-size:16px; }
+  .level-sub{ font-size:12px; color:var(--text-muted); }
+  .predicted-value{ font-family:var(--font-mono); font-size:16px; font-weight:700; }
+
+  /* Heatmap */
+  .heatmap-scroll{ overflow-x:auto; padding-bottom:4px; }
+  .heatmap-grid{ display:grid; grid-template-rows:repeat(7,12px); grid-auto-flow:column; gap:3px; width:max-content; }
+  .heat-cell{ width:12px; height:12px; border-radius:3px; background:var(--border); }
+  .heat-cell[data-level="1"]{ background:rgba(18,184,134,.25); }
+  .heat-cell[data-level="2"]{ background:rgba(18,184,134,.55); }
+  .heat-cell[data-level="3"]{ background:rgba(18,184,134,1); }
+
+  /* Achievements */
+  .achievements-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .achievement-card{ background:var(--card-alt); border-radius:var(--radius-md); padding:14px; text-align:center; opacity:.5; }
+  .achievement-card.unlocked{ opacity:1; box-shadow:0 6px 16px var(--shadow); }
+  .achievement-icon{ font-size:26px; }
+  .achievement-label{ font-size:11px; margin-top:6px; color:var(--text-muted); }
+  .achievement-card.unlocked .achievement-label{ color:var(--text); }
+
+  /* Calendar */
+  .calendar-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .calendar-title{ font-family:var(--font-display); font-size:15px; }
+  .calendar-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+  .cal-cell{ aspect-ratio:1; border:none; border-radius:8px; background:var(--card-alt); font-size:12px; color:var(--text); cursor:pointer; font-family:var(--font-mono); }
+  .cal-cell.empty{ background:none; cursor:default; }
+  .cal-cell.low{ background:rgba(251,107,91,.75); color:#fff; }
+  .cal-cell.saved{ background:var(--primary); color:#04231a; font-weight:700; }
+  .calendar-legend{ display:flex; gap:14px; margin-top:14px; font-size:11.5px; color:var(--text-muted); flex-wrap:wrap; }
+  .legend-dot{ width:10px; height:10px; border-radius:3px; display:inline-block; margin-right:5px; vertical-align:middle; }
+
+  /* History */
+  .history-toolbar{ display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
+  #historySearchInput{ padding:12px 14px; border-radius:14px; border:1px solid var(--border); background:var(--card-alt); color:var(--text); font-size:14px; }
+  .filter-row{ display:flex; gap:6px; }
+  .filter-btn{ flex:1; padding:8px 0; border:none; border-radius:10px; background:var(--card-alt); color:var(--text-muted); font-size:12.5px; cursor:pointer; }
+  .filter-btn.active{ background:var(--primary); color:#04231a; font-weight:700; }
+  .history-row{ display:flex; align-items:center; justify-content:space-between; padding:12px; border-radius:14px; background:var(--card-alt); margin-bottom:8px; gap:8px; }
+  .history-info{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .history-type{ font-size:13px; font-weight:600; }
+  .history-date{ font-size:11px; color:var(--text-muted); }
+  .history-amount{ font-family:var(--font-mono); font-weight:700; white-space:nowrap; }
+  .history-row.is-deposit .history-amount{ color:var(--primary); }
+  .history-row.is-withdraw .history-amount{ color:var(--coral); }
+  .history-actions{ display:flex; gap:6px; flex-shrink:0; }
+  .empty-state{ text-align:center; color:var(--text-muted); padding:26px 10px; }
+
+  /* Settings */
+  .settings-row{ display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border); gap:12px; }
+  .settings-row:last-child{ border-bottom:none; }
+  .settings-label{ font-size:14px; }
+  .settings-desc{ font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+  select, input[type="time"]{ padding:9px 10px; border-radius:10px; border:1px solid var(--border); background:var(--card-alt); color:var(--text); }
+  .switch{ position:relative; width:44px; height:24px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider-toggle{ position:absolute; inset:0; background:var(--border); border-radius:20px; cursor:pointer; transition:.2s; }
+  .slider-toggle::before{ content:''; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; }
+  input:checked + .slider-toggle{ background:var(--primary); }
+  input:checked + .slider-toggle::before{ transform:translateX(20px); }
+  .backup-actions{ display:flex; flex-direction:column; gap:10px; }
+  .goals-reference{ display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px; }
+  .goals-reference div{ background:var(--card-alt); border-radius:12px; padding:10px; }
+  .goals-reference b{ font-family:var(--font-mono); display:block; margin-top:2px; }
+  #importInput{ display:none; }
+
+  /* Toast */
+  .toast-container{ position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:1000; display:flex; flex-direction:column; gap:8px; align-items:center; width:100%; max-width:460px; padding:0 12px; }
+  .toast{ background:var(--card); color:var(--text); padding:11px 16px; border-radius:14px; box-shadow:0 8px 24px var(--shadow); font-size:13.5px; opacity:0; transform:translateY(-10px); transition:.3s; max-width:100%; text-align:center; border:1px solid var(--border); }
+  .toast.show{ opacity:1; transform:translateY(0); }
+
+  /* Modals */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:.25s; z-index:900; }
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .modal-box{ background:var(--card); width:100%; max-width:480px; border-radius:24px 24px 0 0; padding:22px; transform:translateY(30px); transition:.25s; }
+  .modal-overlay.open .modal-box{ transform:translateY(0); }
+  .modal-box h3{ font-family:var(--font-display); margin-bottom:14px; }
+  .modal-close{ float:right; background:var(--card-alt); border:none; width:30px; height:30px; border-radius:50%; cursor:pointer; }
+  .modal-row{ display:flex; justify-content:space-between; padding:8px 0; font-size:14px; border-bottom:1px solid var(--border); }
+  .modal-row:last-child{ border-bottom:none; }
+  .modal-box label{ font-size:12.5px; color:var(--text-muted); display:block; margin:10px 0 4px; }
+  .modal-box input, .modal-box select{ width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--card-alt); color:var(--text); font-size:14px; }
+
+  /* Confetti */
+  .confetti-piece{ position:fixed; top:0; width:8px; height:14px; border-radius:2px; z-index:999; animation:confettiFall 2s ease-in forwards; }
+  @keyframes confettiFall{
+    0%{ transform:translateY(-10vh) rotate(0deg); opacity:1; }
+    100%{ transform:translateY(110vh) rotate(var(--rot,180deg)); opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app" data-theme="dark">
+
+  <header class="topbar">
+    <h1>🐷 Piggy Bank <span class="v2-badge">V2</span></h1>
+    <div class="topbar-actions">
+      <button id="hideToggle" class="icon-btn" title="ซ่อนตัวเลข">🙈</button>
+      <button id="themeToggle" class="icon-btn" title="สลับธีม">☀️</button>
+    </div>
+  </header>
+
+  <main class="pages">
+
+    <!-- HOME -->
+    <section id="page-home" class="page active">
+      <div class="growth-card" id="growthCard">
+        <div class="growth-scene">
+          <span class="growth-tree" id="growthTree">🌱</span>
+          <span class="growth-pig" id="growthPig">🐷</span>
+        </div>
+        <div class="growth-percent"><span id="homePercent">0</span>% ถึงเป้าหมาย</div>
+        <div class="growth-caption">ออมเงินทุกวันเพื่อให้ต้นไม้เติบโต 🌳</div>
+      </div>
+
+      <div class="card">
+        <div class="balance-value">฿<span id="homeBalance">0</span></div>
+        <div class="balance-label">ยอดเงินคงเหลือ</div>
+        <div class="progress-track"><div class="progress-fill" id="homeProgressBar"></div></div>
+        <div class="balance-meta">
+          <span>เป้าหมาย ฿10,000</span>
+          <span>เหลืออีก ฿<span id="homeRemaining">10000</span></span>
+        </div>
+      </div>
+
+      <div class="card quick-add">
+        <h3>💵 บันทึกรายการ</h3>
+        <input type="number" id="quickAmount" placeholder="จำนวนเงิน" inputmode="decimal">
+        <div class="btn-row">
+          <button class="btn btn-add" id="quickAddBtn">➕ เพิ่มเงิน</button>
+          <button class="btn btn-withdraw" id="quickWithdrawBtn">➖ ถอนเงิน</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🎯 เป้าหมายการออม</h3>
+        <div class="goal-grid">
+          <div class="goal-card">
+            <div class="goal-title">วันนี้</div>
+            <div class="goal-value">฿<span id="dailyValue">0</span></div>
+            <div class="goal-bar-track"><div class="goal-bar-fill" id="dailyBar"></div></div>
+            <div class="goal-percent"><span id="dailyPercent">0</span>% · /60</div>
+          </div>
+          <div class="goal-card">
+            <div class="goal-title">สัปดาห์นี้</div>
+            <div class="goal-value">฿<span id="weeklyValue">0</span></div>
+            <div class="goal-bar-track"><div class="goal-bar-fill" id="weeklyBar"></div></div>
+            <div class="goal-percent"><span id="weeklyPercent">0</span>% · /420</div>
+          </div>
+          <div class="goal-card">
+            <div class="goal-title">เดือนนี้</div>
+            <div class="goal-value">฿<span id="monthlyValue">0</span></div>
+            <div class="goal-bar-track"><div class="goal-bar-fill" id="monthlyBar"></div></div>
+            <div class="goal-percent"><span id="monthlyPercent">0</span>% · /1,800</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat-row">
+          <div class="stat-pill">
+            <div class="pill-value">🔥 <span id="streakCount">0</span></div>
+            <div class="pill-label">วันติดต่อกัน</div>
+          </div>
+          <div class="stat-pill">
+            <div class="pill-value" id="savingScoreValue">D</div>
+            <div class="pill-label">คะแนนการออมเดือนนี้</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>✅ ภารกิจวันนี้</h3>
+        <div id="missionsList"></div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section id="page-stats" class="page">
+      <div class="card">
+        <div class="period-toggle">
+          <button class="period-btn active" data-period="7d">7 วัน</button>
+          <button class="period-btn" data-period="30d">30 วัน</button>
+          <button class="period-btn" data-period="monthly">รายเดือน</button>
+          <button class="period-btn" data-period="yearly">รายปี</button>
+        </div>
+        <div class="chart-wrap"><canvas id="savingsChart"></canvas></div>
+      </div>
+
+      <div class="card">
+        <h3>📊 สถิติโดยรวม</h3>
+        <div class="stats-grid">
+          <div class="stat-box"><div class="stat-label">เฉลี่ยต่อวัน</div><div class="stat-value" id="statDailyAvg">฿0</div></div>
+          <div class="stat-box"><div class="stat-label">รวม
